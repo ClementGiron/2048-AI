@@ -1,6 +1,7 @@
 ## Libraries ##
 
 import numpy as np
+import os
 
 
 ## Class game ##
@@ -18,9 +19,9 @@ class Game:
     # init function
     def __init__(self):
         self.init_board()
-        self._score = 0
+        self._score = int(0)
         self._lastAction = None
-        self._nbActions = 0
+        self._nbActions = int(0)
 
 
     # initialize the board with 2 tiles
@@ -66,7 +67,7 @@ class Game:
             k = 0
             while (k < len(l)-1):
                 if l[k] == l[k+1]:
-                    score += l[k]
+                    score += 2*l[k]
                     l[k] *= 2
                     l = l[:k+1] + l[k+2:]
                 k += 1
@@ -112,7 +113,7 @@ class Game:
         score = self.play(action)
         if not np.all(self._board == board):
             self.add_tile()
-            self._score += score
+            self._score += int(score)
             self._lastAction = action
             self._nbActions += 1
 
@@ -132,4 +133,33 @@ class Game:
             print('last action', self._lastAction)
             print('number of actions', self._nbActions)
             print('Board\n', self._board)
+        return None
+
+
+    # save the game
+    def save(self):
+        if not os.path.exists('./save'):
+            os.makedirs('./save')
+        np.save('./save/board', self._board)
+        with open('./save/stats.txt', 'w') as f:
+            f.write("{}\n{}\n{}".format(self._score, self._lastAction, self._nbActions))
+        return None
+
+
+    # load a game
+    def load(self):
+        self._board = np.load('./save/board.npy')
+        with open('./save/stats.txt') as f:
+            st = f.readlines()
+        self._score = int(st[0])
+        self._lastAction = st[1].strip()
+        self._nbActions = int(st[2])
+        return None
+
+
+    # destroy saved game
+    def destroy(self):
+        for f in os.listdir('./save'):
+            ff = os.path.join('./save', f)
+            os.unlink(ff)
         return None

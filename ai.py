@@ -59,7 +59,7 @@ class ArtificialIntelligence:
             k = 0
             while (k < len(l)-1):
                 if l[k] == l[k+1]:
-                    score += l[k]
+                    score += 2*l[k]
                     l[k] *= 2
                     l = l[:k+1] + l[k+2:]
                 k += 1
@@ -128,7 +128,7 @@ class ArtificialIntelligence:
 
         scores = []
 
-        for _ in range(N):
+        for _ in (range(N)):
 
             # begin new game
             g = Game()
@@ -153,8 +153,8 @@ class ArtificialIntelligence:
                 afterBoard = g._board.copy()
                 self.learn_evaluation(board, bestAction, r, afterstate, afterBoard)
 
-            #print(g._score)
-            #print(g._board)
+            print(g._score)
+            print(np.max(g._board))
         # save the look-up tables
         self.save()
 
@@ -174,5 +174,5 @@ class ArtificialIntelligence:
                     bestAction = a
         return bestAction
 
-#ai = ArtificialIntelligence('testmean', warm_start=False)
-#ai.reinforce(5000)
+#ai = ArtificialIntelligence('testmean', warm_start=True)
+#ai.reinforce(10)

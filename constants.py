@@ -1,4 +1,26 @@
+## Libraries ##
+
+import pygame
+
+
+## Game ##
+
+INT_TO_ACT = {
+0: "up",
+1: "right",
+2: "down",
+3: "left"
+}
+
  ## PyGame constants ##
+
+# Fonts
+pygame.init()
+BUTTONFONT = pygame.font.SysFont("monospace", 25)
+SMALLBUTTONFONT = pygame.font.SysFont("monospace", 15)
+TILESFONT = pygame.font.SysFont("courier", 20, bold=True)
+FONT2048 = pygame.font.SysFont("courier", 30, bold=True)
+LEADERBOARDFONT = pygame.font.SysFont("courier", 20, bold=True)
 
 # CPU iterations per second
 CLOCK_TICK = 10
