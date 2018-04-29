@@ -323,6 +323,7 @@ class Interface:
         self.display_lost()
 
         # copied
+        # thanks https://stackoverflow.com/questions/46390231/how-to-create-a-text-input-box-with-pygame
         font = TILESFONT
         input_box = pygame.Rect(300, 200, 200, 32)
         color_inactive = RED2
@@ -387,6 +388,7 @@ class Interface:
         self.display_chooseAI()
 
         # copied
+        # thanks https://stackoverflow.com/questions/46390231/how-to-create-a-text-input-box-with-pygame
         font = TILESFONT
         input_box = pygame.Rect(300, 200, 200, 32)
         color_inactive = RED2
