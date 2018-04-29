@@ -24,7 +24,6 @@ class Interface:
 
         if not os.path.exists('./save'):
             os.makedirs('./save')
-        print(os.listdir('./save'))
         if len(os.listdir('./save')) == 0:
             self._savedGame = False
         else:
@@ -207,25 +206,21 @@ class Interface:
                 if event.type == MOUSEBUTTONDOWN and event.button == 1 \
                 and event.pos[0] < 500 and event.pos[0] > 300 \
                 and event.pos[1] > 50 and event.pos[1] < 100:
-                    print("Play")
                     res = "game"
                     done = True
                 if event.type == MOUSEBUTTONDOWN and event.button == 1 and self._savedGame\
                 and event.pos[0] < 500 and event.pos[0] > 300 \
                 and event.pos[1] > 133 and event.pos[1] < 183:
-                    print("savedGame")
                     res = "savedgame"
                     done = True
                 if event.type == MOUSEBUTTONDOWN and event.button == 1 \
                 and event.pos[0] < 500 and event.pos[0] > 300 \
                 and event.pos[1] > 150+67*self._savedGame and event.pos[1] < 200+67*self._savedGame:
-                    print("scores")
                     res = "scores"
                     done = True
                 if event.type == MOUSEBUTTONDOWN and event.button == 1 \
                 and event.pos[0] < 500 and event.pos[0] > 300 \
                 and event.pos[1] > 250+50*self._savedGame and event.pos[1] < 300+50*self._savedGame:
-                    print("AI")
                     res = "ai"
                     done = True
         return res
@@ -456,6 +451,7 @@ class Interface:
         #iterate while not lost
         done = False
         c = True
+        res = "menu"
         while not done:
             # draw the board
             self._clock.tick(CLOCK_TICK)
@@ -512,10 +508,11 @@ class Interface:
                 self._state = self.run_playAI(pathAI)
             elif self._state == "end":
                 done = True
-                print("end")
 
 
+## Execution ##
 
-pygame.init()
-i = Interface()
-i.run()
+if __name__ == '__main__':
+    pygame.init()
+    i = Interface()
+    i.run()

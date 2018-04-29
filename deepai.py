@@ -2,13 +2,14 @@
 import numpy as np
 import json
 import os
+import sys
 from game import *
 from constants import *
 import keras
 from keras.models import Sequential, model_from_json
 from keras.layers.core import Dense, Flatten
-from keras.optimizers import sgd
-from keras.layers import Conv2D, MaxPooling2D, Activation, AveragePooling2D,Reshape, BatchNormalization
+from keras.optimizers import sgd, Adam
+from keras.layers import Conv2D, MaxPooling2D, Activation, AveragePooling2D, Reshape
 
 
 ## Class Memory ##
@@ -49,17 +50,18 @@ class DeepAI(object):
 
     def init_model(self):
         model = Sequential()
-        #model.add(Conv2D(filters=32, kernel_size=(3, 3), activation='relu', input_shape=(4, 4, 1)))
-        #model.add(Conv2D(filters=16, kernel_size=(2, 2), activation='relu'))
-        #model.add(Flatten())
-        #model.add(Dense(4))
-        model.add(Flatten(input_shape=(4, 4, 1)))
+        model.add(Conv2D(filters=128, kernel_size=(2, 2), activation='relu', input_shape=(4, 4, 1)))
+        model.add(Conv2D(filters=128, kernel_size=(2, 2), activation='relu'))
+        model.add(Conv2D(filters=128, kernel_size=(2, 2), activation='relu'))
+        model.add(Flatten())
+        model.add(Dense(4))
+        '''model.add(Flatten(input_shape=(4, 4, 1)))
         model.add(Dense(128, activation='relu'))
         model.add(Dense(64, activation='relu'))
         model.add(Dense(32, activation='relu'))
         model.add(Dense(16, activation='relu'))
-        model.add(Dense(4))
-        model.compile(sgd(lr=self._lr, decay=1e-4, momentum=0.0), "mse")
+        model.add(Dense(4))'''
+        model.compile(Adam(lr=self._lr, decay=1e-4), "mse")
         self._model = model
         return None
 
@@ -90,12 +92,12 @@ class DeepAI(object):
         y = np.zeros((self._batch_size, 4))
         for i in range(self._batch_size):
             s, ns, a, r, go = self._memory.random_access()
-            r = r
+            r = r/100
             X[i, :, :, 0] = s
             Qs, Q_ns = self._model.predict(np.vstack((s[np.newaxis, :], ns[np.newaxis, :]))[:, :, :, np.newaxis])
             y[i, :] = Qs
             if go:
-                y[i, a] = r
+                y[i, a] = r - 163.84
             else:
                 y[i, a] = r + self._discount*np.max(Q_ns)
         y = np.clip(y, -16384, 16384)
@@ -129,6 +131,19 @@ class DeepAI(object):
         return None
 
 
-ai = DeepAI("testdeep", warm_start=False, discount=0.6)
-eps_function = lambda x: 0.001
-ai.train(10000, eps_function)
+## Execution ##
+
+if __name__ == '__main__':
+    nameAI = sys.argv[1].strip()
+    nbPlay = int(sys.argv[2].strip())
+    ws = sys.argv[3].strip()
+    assert ws in ['warm', 'cold'], "3rd argument must be 'warm' or 'cold'"
+    warm = (ws == 'warm')
+    ai = DeepAI(nameAI, warm_start=warm, discount=0.4, lr=1)
+    def eps_function(x):
+        '''if x < 100:
+            return 1/np.sqrt(x+1)
+        else:
+            return 0.1'''
+        return 0.01
+    ai.train(nbPlay, eps_function)

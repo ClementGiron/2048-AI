@@ -6,6 +6,7 @@ from constants import *
 from game import *
 from tqdm import tqdm
 import os
+import sys
 
 
 ## Class AI ##
@@ -128,7 +129,7 @@ class ArtificialIntelligence:
 
         scores = []
 
-        for _ in (range(N)):
+        for _ in tqdm(range(N)):
 
             # begin new game
             g = Game()
@@ -153,9 +154,11 @@ class ArtificialIntelligence:
                 afterBoard = g._board.copy()
                 self.learn_evaluation(board, bestAction, r, afterstate, afterBoard)
 
-            print(g._score)
-            print(np.max(g._board))
+            #print(g._score)
+            #print(np.max(g._board))
+            scores.append(g._score)
         # save the look-up tables
+        print("Max score reached during training:", np.max(scores))
         self.save()
 
         return None
@@ -174,5 +177,14 @@ class ArtificialIntelligence:
                     bestAction = a
         return bestAction
 
-#ai = ArtificialIntelligence('testmean', warm_start=True)
-#ai.reinforce(10)
+
+## Execution ##
+
+if __name__ == '__main__':
+    nameAI = sys.argv[1].strip()
+    nbPlay = int(sys.argv[2].strip())
+    ws = sys.argv[3].strip()
+    assert ws in ['warm', 'cold'], "3rd argument must be 'warm' or 'cold'"
+    warm = (ws == 'warm')
+    ai = ArtificialIntelligence(nameAI, warm_start=warm)
+    ai.reinforce(nbPlay)
